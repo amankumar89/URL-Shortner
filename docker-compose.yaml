@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:17.4
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: url_shortner_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
