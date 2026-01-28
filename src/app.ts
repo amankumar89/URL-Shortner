@@ -15,7 +15,7 @@ app.get("/", (_req: Request, res: Response) => {
   });
 });
 
-app.use(urlRoutes);
 app.use("/user", userRoutes);
+app.use(urlRoutes);
 
 export default app;

@@ -3,7 +3,10 @@ import { shortenPostRequestBodySchema } from "../validations/request.validation"
 import { nanoid } from "nanoid";
 import type { AuthRequest } from "../types";
 import { ensureAuthenticated } from "../middlewares/auth.middleware";
-import { createShortenCode } from "../services/url.service";
+import {
+  createShortenCode,
+  findTargetUrlByCode,
+} from "../services/url.service";
 
 const router = Router();
 
@@ -31,5 +34,19 @@ router.post(
     });
   },
 );
+
+router.get("/:shortCode", async (req: AuthRequest, res: Response) => {
+  const code = req.params?.shortCode as string;
+
+  const result = await findTargetUrlByCode(code);
+
+  if (!result) {
+    return res.status(404).json({
+      error: "Invalid URL",
+    });
+  }
+
+  return res.redirect(result.targetURL);
+});
 
 export default router;
