@@ -1,6 +1,8 @@
 import express, { type Request, type Response } from "express";
-import userRoutes from "./routes/user.route";
 import { authenticationMiddleware } from "./middlewares/auth.middleware";
+
+import userRoutes from "./routes/user.route";
+import urlRoutes from "./routes/url.route";
 
 const app = express();
 
@@ -13,6 +15,7 @@ app.get("/", (_req: Request, res: Response) => {
   });
 });
 
+app.use(urlRoutes);
 app.use("/user", userRoutes);
 
 export default app;
