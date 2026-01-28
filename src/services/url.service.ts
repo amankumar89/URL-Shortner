@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import db from "../db";
 import { urlsTable } from "../models";
 
@@ -32,4 +32,19 @@ export const findTargetUrlByCode = async (shortCode: string) => {
     .where(eq(urlsTable.shortCode, shortCode));
 
   return result;
+};
+
+export const getAllUrls = async (userId: string) => {
+  const codes = await db
+    .select()
+    .from(urlsTable)
+    .where(eq(urlsTable.userId, userId));
+
+  return codes;
+};
+
+export const deleteUrl = async (urlId: string, userId: string) => {
+  return await db
+    .delete(urlsTable)
+    .where(and(eq(urlsTable.userId, userId), eq(urlsTable.id, urlId)));
 };

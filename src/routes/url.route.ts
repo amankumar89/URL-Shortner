@@ -5,7 +5,9 @@ import type { AuthRequest } from "../types";
 import { ensureAuthenticated } from "../middlewares/auth.middleware";
 import {
   createShortenCode,
+  deleteUrl,
   findTargetUrlByCode,
+  getAllUrls,
 } from "../services/url.service";
 
 const router = Router();
@@ -32,6 +34,30 @@ router.post(
       shortCode: result?.shortCode,
       targetURL: result?.targetURL,
     });
+  },
+);
+
+router.get(
+  "/codes",
+  ensureAuthenticated,
+  async (req: AuthRequest, res: Response) => {
+    const codes = await getAllUrls(req.user!?.id);
+    return res.status(200).json({ codes });
+  },
+);
+
+router.delete(
+  "/:id",
+  ensureAuthenticated,
+  async (req: AuthRequest, res: Response) => {
+    const id = req.params?.id as string;
+    try {
+      await deleteUrl(id, req.user!?.id);
+    } catch (error) {
+      console.log("error in code delete", error);
+      return res.status(400).json({ error: "Failed to deleted." });
+    }
+    return res.status(200).json({ deleted: true });
   },
 );
 
