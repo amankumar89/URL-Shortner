@@ -23,7 +23,7 @@ public interface UrlRepository extends JpaRepository<Url, Long> {
     @Query("""
         SELECT u FROM Url u
         WHERE u.user.id = :userId
-        AND (:search IS NULL OR u.targetUrl LIKE %:search%)
+        AND (:search IS NULL OR u.targetURL LIKE %:search%)
         AND (:status IS NULL OR u.status = :status)
     """)
     Page<Url> findAll(

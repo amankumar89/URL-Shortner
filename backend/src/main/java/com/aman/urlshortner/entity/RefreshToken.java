@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -31,21 +33,14 @@ public class RefreshToken {
     private LocalDateTime expiryDate;
 
     @Column(nullable = false)
-    private Boolean revoked;
+    @Builder.Default
+    private boolean revoked = false;
 
+    @CreationTimestamp
+    @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @UpdateTimestamp
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    void create() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    void update() {
-        updatedAt = LocalDateTime.now();
-    }
-
 }

@@ -5,13 +5,15 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Builder
-@Table(name = "URLs",
+@Table(name = "urls",
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "short_code")
         })
@@ -37,20 +39,11 @@ public class Url {
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
+    @Column(nullable = false, updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(name = "updated_at", nullable = false, updatable = false)
+    @Column(nullable = false)
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
-
-    @PrePersist
-    void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }

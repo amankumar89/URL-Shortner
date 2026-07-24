@@ -2,8 +2,9 @@ package com.aman.urlshortner.entity;
 
 import jakarta.persistence.*;
         import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
-        import java.time.LocalDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(
@@ -33,12 +34,6 @@ public class UrlClick {
     private Url url;
 
     @Column(name = "clicked_at", nullable = false)
+    @CreationTimestamp
     private LocalDateTime clickedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        if (clickedAt == null) {
-            clickedAt = LocalDateTime.now();
-        }
-    }
 }

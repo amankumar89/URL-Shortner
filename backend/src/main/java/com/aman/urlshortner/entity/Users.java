@@ -1,23 +1,20 @@
 package com.aman.urlshortner.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
 @Table(name = "url_auth_users", uniqueConstraints = {
         @UniqueConstraint(name = "uk_user_email", columnNames = "email"),
-}, indexes = {
-        @Index(name = "idx_user_email", columnList = "email"),
-        @Index(name = "idx_user_created_at", columnList = "createdAt")
 })
 @AllArgsConstructor
 @NoArgsConstructor
@@ -39,9 +36,11 @@ public class Users {
     private String password;
 
     @Column(name = "created_at", nullable = false, updatable = false)
+    @CreationTimestamp
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
+    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     @OneToMany(
@@ -50,7 +49,7 @@ public class Users {
             fetch = FetchType.LAZY,
             orphanRemoval = true)
     @Builder.Default
-    private Set<Url> url = new HashSet<>();
+    private Set<Url> urls = new HashSet<>();
 
     @OneToMany(mappedBy = "user",
             cascade = CascadeType.ALL,
@@ -58,15 +57,4 @@ public class Users {
             orphanRemoval = true)
     @Builder.Default
     private Set<RefreshToken> refreshTokens = new HashSet<>();
-
-    @PrePersist
-    void onCreate() {
-        createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    void onUpdate() {
-        updatedAt = LocalDateTime.now();
-    }
 }

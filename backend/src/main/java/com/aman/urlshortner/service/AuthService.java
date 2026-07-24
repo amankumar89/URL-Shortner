@@ -79,7 +79,7 @@ public class AuthService {
                 .findByToken(refreshToken)
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid refresh token"));
 
-        if (Boolean.TRUE.equals(storedToken.getRevoked())) {
+        if (storedToken.isRevoked()) {
             throw new InvalidCredentialsException("Refresh token has been revoked.");
         }
 
