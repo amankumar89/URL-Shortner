@@ -42,7 +42,7 @@ public class AuthController {
             HttpServletResponse response
     ) {
         String token = cookieUtil.getRefreshToken(request);
-        return ApiResponse.ok(authService.generateRefreshToken(token, response));
+        return ApiResponse.ok("Refresh token", authService.generateRefreshToken(token, response));
     }
 
     @PostMapping("/logout")

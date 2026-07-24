@@ -5,11 +5,16 @@ import com.aman.urlshortner.dto.request.ShortenUrlRequestDto;
 import com.aman.urlshortner.dto.response.ShortenUrlResponseDto;
 import com.aman.urlshortner.dto.response.UrlResponseDto;
 import com.aman.urlshortner.entity.Url;
+import com.aman.urlshortner.entity.UrlStatus;
 import com.aman.urlshortner.entity.Users;
 import com.aman.urlshortner.exception.ResourceNotFoundException;
 import com.aman.urlshortner.repository.UrlRepository;
 import com.aman.urlshortner.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -31,13 +36,25 @@ public class UrlService {
         return urlMapper.shortenUrlResponseDto(urlRepository.save(url));
     }
 
-    public List<UrlResponseDto> getAllCodes() {
+    public Page<UrlResponseDto> getAllCodes(
+            int page,
+            int size,
+            String sortBy,
+            String orderBy,
+            String search,
+            UrlStatus status
+    ) {
         Long userId = currentUserService.getUserId();
         if (userId == null) {
             throw new AuthorizationDeniedException("Unauthorized");
         }
-        List<Url> urls = urlRepository.findByUserId(userId);
-        return urls.stream().map(urlMapper::mapToUrlResponseDto).toList();
+        // sorting and page
+        Sort.Direction direction = Sort.Direction.fromString(orderBy);
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+
+        return urlRepository
+                .findAll(userId, search, status, pageable)
+                .map(urlMapper::mapToUrlResponseDto);
     }
 
     public String redirect(String shortCode) {

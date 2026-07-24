@@ -4,13 +4,14 @@ import com.aman.urlshortner.dto.request.ShortenUrlRequestDto;
 import com.aman.urlshortner.dto.response.ApiResponse;
 import com.aman.urlshortner.dto.response.ShortenUrlResponseDto;
 import com.aman.urlshortner.dto.response.UrlResponseDto;
+import com.aman.urlshortner.entity.UrlStatus;
 import com.aman.urlshortner.service.UrlService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/url")
@@ -27,8 +28,22 @@ public class UrlController {
     }
 
     @GetMapping("/codes")
-    public ResponseEntity<ApiResponse<List<UrlResponseDto>>> getAllCodes() {
-        List<UrlResponseDto> lists = urlService.getAllCodes();
+    public ResponseEntity<ApiResponse<Page<UrlResponseDto>>> getAllCodes(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "createdAt") String sortBy,
+            @RequestParam(defaultValue = "desc") String orderBy,
+            @RequestParam(required = false) String search,
+            @RequestParam(required = false) UrlStatus status
+    ) {
+        Page<UrlResponseDto> lists = urlService.getAllCodes(
+                page,
+                size,
+                sortBy,
+                orderBy,
+                search,
+                status
+        );
         return ApiResponse.ok("All URLs fetched", lists);
     }
 

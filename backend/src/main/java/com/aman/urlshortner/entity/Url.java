@@ -28,6 +28,11 @@ public class Url {
     @Column(name = "target_url", nullable = false, columnDefinition = "TEXT")
     private String targetURL;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    @Builder.Default
+    private UrlStatus status = UrlStatus.ACTIVE;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
