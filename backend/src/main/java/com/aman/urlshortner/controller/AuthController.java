@@ -2,6 +2,7 @@ package com.aman.urlshortner.controller;
 
 import com.aman.urlshortner.dto.request.LoginRequestDto;
 import com.aman.urlshortner.dto.request.RegisterRequestDto;
+import com.aman.urlshortner.dto.request.UpdateRequestDto;
 import com.aman.urlshortner.dto.response.*;
 import com.aman.urlshortner.service.AuthService;
 import com.aman.urlshortner.utils.CookieUtil;
@@ -58,5 +59,12 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<ApiResponse<UserResponseDto>> profile() {
         return ApiResponse.ok("User data fetched", authService.profile());
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<ApiResponse<UserResponseDto>> updateUser(
+            @RequestBody UpdateRequestDto requestDto
+            ) {
+        return ApiResponse.ok("User data fetched", authService.update(requestDto));
     }
 }

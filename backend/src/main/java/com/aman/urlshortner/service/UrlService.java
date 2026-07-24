@@ -1,7 +1,7 @@
 package com.aman.urlshortner.service;
 
-import com.aman.urlshortner.dto.mapper.UrlMapper;
 import com.aman.urlshortner.dto.request.ShortenUrlRequestDto;
+import com.aman.urlshortner.dto.response.PageResponseDto;
 import com.aman.urlshortner.dto.response.ShortenUrlResponseDto;
 import com.aman.urlshortner.dto.response.UrlResponseDto;
 import com.aman.urlshortner.entity.Url;
@@ -11,6 +11,7 @@ import com.aman.urlshortner.exception.ResourceNotFoundException;
 import com.aman.urlshortner.repository.UrlRepository;
 import com.aman.urlshortner.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UrlService {
     private final UrlRepository urlRepository;
-    private final UrlMapper urlMapper;
+    private final ModelMapper modelMapper;
     private final CurrentUserService currentUserService;
     private final UserRepository userRepository;
 
@@ -32,11 +33,15 @@ public class UrlService {
         Users user = userRepository
                 .findById(currentUserService.getUserId())
                 .orElseThrow(() -> new AuthorizationDeniedException("Forbidden"));
-        Url url = urlMapper.mapToEntity(requestUrl, user);
-        return urlMapper.shortenUrlResponseDto(urlRepository.save(url));
+        System.out.println(requestUrl.toString());
+        Url url = new Url();
+        url.setShortCode(requestUrl.getShortCode());
+        url.setTargetUrl(requestUrl.getTargetUrl());
+        url.setUser(user);
+        return modelMapper.map(urlRepository.save(url), ShortenUrlResponseDto.class);
     }
 
-    public Page<UrlResponseDto> getAllCodes(
+    public PageResponseDto<UrlResponseDto> getAllCodes(
             int page,
             int size,
             String sortBy,
@@ -51,17 +56,27 @@ public class UrlService {
         // sorting and page
         Sort.Direction direction = Sort.Direction.fromString(orderBy);
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        Page<Url> urlPage = urlRepository.findAll(userId, search, status, pageable);
 
-        return urlRepository
-                .findAll(userId, search, status, pageable)
-                .map(urlMapper::mapToUrlResponseDto);
+        List<UrlResponseDto> urlLists = urlPage.getContent()
+                .stream()
+                .map((url) -> modelMapper.map(url, UrlResponseDto.class))
+                .toList();
+
+        return PageResponseDto
+                .<UrlResponseDto>builder()
+                .links(urlLists)
+                .size(urlPage.getSize())
+                .total(urlPage.getTotalElements())
+                .totalPages(urlPage.getTotalPages())
+                .build();
     }
 
     public String redirect(String shortCode) {
         Url url = urlRepository
                 .findByShortCode(shortCode)
                 .orElseThrow(() -> new ResourceNotFoundException("URL not found"));
-        return url.getTargetURL();
+        return url.getTargetUrl();
     }
 
     public void deleteUrl(Long id) {

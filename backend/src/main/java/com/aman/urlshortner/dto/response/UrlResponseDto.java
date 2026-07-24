@@ -1,5 +1,6 @@
 package com.aman.urlshortner.dto.response;
 
+import com.aman.urlshortner.entity.UrlStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -14,7 +15,9 @@ import java.time.LocalDateTime;
 public class UrlResponseDto {
     private Long id;
     private String shortCode;
-    private String targetURL;
+    private String targetUrl;
+    private UrlStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
 }

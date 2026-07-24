@@ -4,6 +4,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,14 +21,24 @@ public class CookieUtil {
             int maxAge
     ) {
 
-        Cookie cookie = new Cookie(REFRESH_COOKIE, token);
+//        Cookie cookie = new Cookie(REFRESH_COOKIE, token);
+//
+//        cookie.setHttpOnly(true);
+//        cookie.setSecure(secure);
+//        cookie.setPath("/");
+//        cookie.setMaxAge(maxAge);
+//
+//        response.addCookie(cookie);
 
-        cookie.setHttpOnly(true);
-        cookie.setSecure(secure);
-        cookie.setPath("/");
-        cookie.setMaxAge(maxAge);
+        ResponseCookie cookie = ResponseCookie.from(REFRESH_COOKIE, token)
+                .httpOnly(true)
+                .secure(secure)
+                .sameSite("Lax")   // or "None" if frontend is on another origin
+                .path("/")
+                .maxAge(maxAge)
+                .build();
 
-        response.addCookie(cookie);
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     public String getRefreshToken(HttpServletRequest request) {

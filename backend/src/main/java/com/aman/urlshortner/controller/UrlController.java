@@ -2,6 +2,7 @@ package com.aman.urlshortner.controller;
 
 import com.aman.urlshortner.dto.request.ShortenUrlRequestDto;
 import com.aman.urlshortner.dto.response.ApiResponse;
+import com.aman.urlshortner.dto.response.PageResponseDto;
 import com.aman.urlshortner.dto.response.ShortenUrlResponseDto;
 import com.aman.urlshortner.dto.response.UrlResponseDto;
 import com.aman.urlshortner.entity.UrlStatus;
@@ -28,7 +29,7 @@ public class UrlController {
     }
 
     @GetMapping("/codes")
-    public ResponseEntity<ApiResponse<Page<UrlResponseDto>>> getAllCodes(
+    public ResponseEntity<ApiResponse<PageResponseDto<UrlResponseDto>>> getAllCodes(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "createdAt") String sortBy,
@@ -36,7 +37,7 @@ public class UrlController {
             @RequestParam(required = false) String search,
             @RequestParam(required = false) UrlStatus status
     ) {
-        Page<UrlResponseDto> lists = urlService.getAllCodes(
+        PageResponseDto<UrlResponseDto> lists = urlService.getAllCodes(
                 page,
                 size,
                 sortBy,

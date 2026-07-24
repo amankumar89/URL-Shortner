@@ -13,10 +13,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Builder
-@Table(name = "urls",
-        uniqueConstraints = {
-                @UniqueConstraint(columnNames = "short_code")
-        })
+@Table(name = "urls")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Url {
@@ -27,11 +24,10 @@ public class Url {
     @Column(name = "short_code", nullable = false, unique = true)
     private String shortCode;
 
-    @Column(name = "target_url", nullable = false, columnDefinition = "TEXT")
-    private String targetURL;
+    @Column(name = "target_url", nullable = false)
+    private String targetUrl;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false, length = 20)
     @Builder.Default
     private UrlStatus status = UrlStatus.ACTIVE;
 
@@ -39,11 +35,9 @@ public class Url {
     @JoinColumn(name = "user_id", nullable = false)
     private Users user;
 
-    @Column(nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 }

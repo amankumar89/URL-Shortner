@@ -1,8 +1,8 @@
 package com.aman.urlshortner.service;
 
-import com.aman.urlshortner.dto.mapper.UserMapper;
 import com.aman.urlshortner.dto.request.LoginRequestDto;
 import com.aman.urlshortner.dto.request.RegisterRequestDto;
+import com.aman.urlshortner.dto.request.UpdateRequestDto;
 import com.aman.urlshortner.dto.response.LoginResponseDto;
 import com.aman.urlshortner.dto.response.RefreshTokenResponseDto;
 import com.aman.urlshortner.dto.response.RegisterResponseDto;
@@ -17,10 +17,12 @@ import com.aman.urlshortner.repository.UserRepository;
 import com.aman.urlshortner.utils.CookieUtil;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -32,11 +34,12 @@ import java.util.Base64;
 public class AuthService {
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final UserMapper userMapper;
+    private final ModelMapper modelMapper;
     private final AuthenticationManager authenticationManager;
     private final JwtService jwtService;
     private final CookieUtil cookieUtil;
     private final CurrentUserService currentUserService;
+    private final PasswordEncoder passwordEncoder;
 
     @Value("${jwt.refresh-token-expiration}")
     private long refreshTokenExpiration;
@@ -45,9 +48,10 @@ public class AuthService {
         if (userRepository.existsByEmail(registerRequestDto.getEmail())) {
             throw new DuplicateResourceException("Email already exists");
         }
-        Users user = userMapper.mapToEntity(registerRequestDto);
+        Users user = modelMapper.map(registerRequestDto, Users.class);
+        user.setPassword(passwordEncoder.encode(registerRequestDto.getPassword()));
         Users savedUser = userRepository.save(user);
-        return userMapper.mapToRegisterResponseDto(savedUser);
+        return modelMapper.map(savedUser, RegisterResponseDto.class);
     }
 
     public LoginResponseDto loginUser(LoginRequestDto loginRequestDto, HttpServletResponse response) {
@@ -67,9 +71,23 @@ public class AuthService {
                 refreshToken.getToken(),
                 (int) (refreshTokenExpiration / 1000)
         );
-        return userMapper.mapToLoginResponseDto(user, accessToken);
+        LoginResponseDto loginResponseDto = modelMapper.map(user, LoginResponseDto.class);
+        loginResponseDto.setToken(accessToken);
+        return loginResponseDto;
     }
 
+    public UserResponseDto update(UpdateRequestDto requestDto) {
+        Long userId = currentUserService.getUserId();
+        Users user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id "+userId));
+        user.setFirstName(requestDto.getFirstName());
+        user.setLastName(requestDto.getLastName());
+        if(requestDto.getPassword() != null){
+            user.setPassword(passwordEncoder.encode(requestDto.getPassword()));
+        }
+        Users updatedUser = userRepository.save(user);
+        return modelMapper.map(updatedUser, UserResponseDto.class);
+    }
 
     public RefreshTokenResponseDto generateRefreshToken(String refreshToken, HttpServletResponse response) {
         if (refreshToken == null || refreshToken.isBlank()) {
@@ -122,7 +140,7 @@ public class AuthService {
             throw new ResourceNotFoundException("User not found");
         }
         Users user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        return userMapper.mapToUserResponseDto(user);
+        return modelMapper.map(user, UserResponseDto.class);
     }
 
     private RefreshToken createRefreshToken(Users user) {

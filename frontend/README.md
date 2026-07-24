@@ -1,75 +1,57 @@
-# React + TypeScript + Vite
+# Linkly — URL Shortener Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, orange-accented dashboard for the Spring Boot URL Shortener API (see `URL-SHOTERNER.json`).
 
-Currently, two official plugins are available:
+## Stack
+- React 19 + TypeScript
+- Vite
+- Tailwind CSS v4
+- React Router v7
+- TanStack Query v5
+- Axios
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Getting started
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The app opens on `/login`. Sign in with any email/password — it currently runs in **mock mode**, so no backend is required to explore the UI.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Connecting to the real Spring Boot backend
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+1. Copy `.env.example` to `.env` and set `VITE_API_BASE_URL` to your backend URL (defaults to `http://localhost:8080`, matching the Postman collection's `baseUrl` variable).
+2. Open `src/lib/api.ts` and set `USE_MOCK = false`.
+3. Make sure your backend exposes the endpoints from `URL-SHOTERNER.json`:
+   - `POST /auth/register`
+   - `POST /auth/login`
+   - `GET /auth/me`
+   - `POST /auth/refresh-token`
+   - `POST /auth/logout`
+   - `POST /url/shorten`
+
+The JWT access token is stored in `localStorage` and attached to every request via an Axios interceptor. A 401 response triggers a silent refresh via `/auth/refresh-token` before retrying the original request.
+
+## Project structure
 
 ```
+src/
+  components/
+    layout/     AppShell, Sidebar, Topbar, ProtectedRoute
+    ui/         Button, Badge, Card, Input, Select, Logo, PageHeader, EmptyState
+    dashboard/  StatCard
+    links/      LinksTable (sortable)
+  pages/        Login, Register, Dashboard, Create URL, Link Detail,
+                Analytics, My Links, Settings
+  hooks/        useAuth, useLinks (TanStack Query)
+  lib/          http.ts (axios client), api.ts (service layer), mockData.ts
+  types/        shared TypeScript types
+```
+
+## Scripts
+
+- `npm run dev` — start dev server
+- `npm run build` — type-check + production build
+- `npm run lint` — oxlint
+- `npm run preview` — preview production build

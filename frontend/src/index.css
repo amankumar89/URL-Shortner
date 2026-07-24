@@ -1,0 +1,114 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink: var(--c-ink);
+  --color-surface-0: var(--c-surface-0);
+  --color-surface-1: var(--c-surface-1);
+  --color-surface-2: var(--c-surface-2);
+  --color-surface-3: var(--c-surface-3);
+  --color-border: var(--c-border);
+  --color-border-soft: var(--c-border-soft);
+  --color-text-primary: var(--c-text-primary);
+  --color-text-secondary: var(--c-text-secondary);
+  --color-text-muted: var(--c-text-muted);
+  --color-accent: var(--c-accent);
+  --color-accent-hover: var(--c-accent-hover);
+  --color-accent-soft: var(--c-accent-soft);
+  --color-accent-ring: var(--c-accent-ring);
+  --color-success: var(--c-success);
+  --color-success-soft: var(--c-success-soft);
+  --color-warning: var(--c-warning);
+  --color-warning-soft: var(--c-warning-soft);
+  --color-danger: var(--c-danger);
+  --color-danger-soft: var(--c-danger-soft);
+
+  --font-display: "Space Grotesk", "Inter", sans-serif;
+  --font-sans: "Inter", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+/* ---- Dark theme (default) ---- */
+:root {
+  --c-ink: #100e0a;
+  --c-surface-0: #15130f;
+  --c-surface-1: #1d1a15;
+  --c-surface-2: #24211a;
+  --c-surface-3: #2e2a21;
+  --c-border: #35311f;
+  --c-border-soft: #26231a;
+
+  --c-text-primary: #f3efe5;
+  --c-text-secondary: #aba491;
+  --c-text-muted: #756e5c;
+
+  --c-accent: #f97316;
+  --c-accent-hover: #fb8a34;
+  --c-accent-soft: #3a2413;
+  --c-accent-ring: #f9731655;
+
+  --c-success: #22c55e;
+  --c-success-soft: #16301f;
+  --c-warning: #eab308;
+  --c-warning-soft: #332b0e;
+  --c-danger: #f0554a;
+  --c-danger-soft: #391e1b;
+}
+
+/* ---- Light theme ---- */
+.light {
+  --c-ink: #ffffff;
+  --c-surface-0: #faf8f3;
+  --c-surface-1: #ffffff;
+  --c-surface-2: #f3efe5;
+  --c-surface-3: #e9e3d4;
+  --c-border: #e2dbc8;
+  --c-border-soft: #ede8da;
+
+  --c-text-primary: #221f17;
+  --c-text-secondary: #6b6452;
+  --c-text-muted: #948c76;
+
+  --c-accent: #ea6a0c;
+  --c-accent-hover: #d65f0a;
+  --c-accent-soft: #fdebda;
+  --c-accent-ring: #f9731640;
+
+  --c-success: #16a34a;
+  --c-success-soft: #dcfce7;
+  --c-warning: #ca8a04;
+  --c-warning-soft: #fef9c3;
+  --c-danger: #dc2626;
+  --c-danger-soft: #fee2e2;
+}
+
+html {
+  color-scheme: dark;
+}
+html.light {
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--color-surface-0);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+html:not(.light) body {
+  background-image:
+    radial-gradient(
+      circle at 12% 8%,
+      rgba(249, 115, 22, 0.07),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 90% 90%,
+      rgba(249, 115, 22, 0.04),
+      transparent 45%
+    );
+  background-attachment: fixed;
+}
