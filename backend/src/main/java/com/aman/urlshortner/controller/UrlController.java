@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 
 @RestController
 @RequestMapping("/api/url")
@@ -51,6 +53,9 @@ public class UrlController {
     @GetMapping("/{shortCode}")
     public ResponseEntity<ApiResponse<Void>> redirectToUrl(@PathVariable String shortCode) {
         String urlString = urlService.redirect(shortCode);
+        if(Objects.equals(urlString, "failed")) {
+            return ApiResponse.badRequest("Expired url");
+        }
         return ApiResponse.redirect(urlString);
     }
 

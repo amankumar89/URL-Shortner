@@ -5,6 +5,10 @@ import { Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { useLinks, useToggleLinkStatus } from "@/hooks/useLinks";
+import { getStatus } from "@/helper";
+import toast from "react-hot-toast";
+
+const baseUrl = "http://localhost:3000/api";
 
 export default function LinkDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -14,7 +18,6 @@ export default function LinkDetailPage() {
   const links = data?.links ?? [];
 
   const link = links.find((l) => l.id === Number(id));
-  console.log(links, id);
 
   return (
     <div className="max-w-130 animate-fade-up">
@@ -41,34 +44,40 @@ export default function LinkDetailPage() {
                 {link?.shortCode}
               </p>
               <button
-                onClick={() =>
-                  navigator.clipboard.writeText(`https://${link?.shortCode}`)
-                }
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `${baseUrl}/url/${link?.shortCode}`,
+                  );
+                  toast.success("Copied");
+                }}
                 className="text-text-muted hover:text-text-primary transition-colors cursor-pointer"
                 aria-label="Copy short link"
               >
                 <Copy size={14} />
               </button>
+              <a
+                href={`${baseUrl}/url/${link?.shortCode}`}
+                target="_blank"
+                rel="noreferrer"
+                className="text-[13px] text-text-secondary break-all inline-flex items-center gap-1.5 hover:text-text-primary transition-colors mb-5"
+              >
+                <ExternalLink size={12} className="shrink-0" />
+              </a>
             </div>
             <Button
               size="sm"
-              variant="secondary"
+              variant={link.status === "EXPIRED" ? "danger" : "secondary"}
               loading={isPending}
               onClick={() => toggleStatus(link.id)}
+              disabled={link.status === "EXPIRED"}
             >
-              {link.status === "ACTIVE" ? "Pause" : "Activate"}
+              {getStatus(link.status)}
             </Button>
           </div>
 
-          <a
-            href={link.targetUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="text-[13px] text-text-secondary break-all inline-flex items-center gap-1.5 hover:text-text-primary transition-colors mb-5"
-          >
+          <p className="text-[13px] text-text-secondary break-all inline-flex items-center gap-1.5 hover:text-text-primary transition-colors mb-5 disabled">
             {link.targetUrl}
-            <ExternalLink size={12} className="shrink-0" />
-          </a>
+          </p>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-surface-2 rounded-lg px-3.5 py-3">
@@ -78,11 +87,11 @@ export default function LinkDetailPage() {
             <div className="bg-surface-2 rounded-lg px-3.5 py-3">
               <p className="text-xs text-text-secondary mb-1">Clicks</p>
               <p className="text-sm font-medium">
-                {link?.clicks?.toLocaleString()}
+                {link?.clickCount?.toLocaleString()}
               </p>
             </div>
             <div className="bg-surface-2 rounded-lg px-3.5 py-3">
-              <p className="text-xs text-text-secondary mb-1">Created</p>
+              <p className="text-xs text-text-secondary mb-1">Created At</p>
               <p className="text-sm font-medium">
                 {new Date(link.createdAt)?.toLocaleDateString(undefined, {
                   year: "numeric",
@@ -92,9 +101,9 @@ export default function LinkDetailPage() {
               </p>
             </div>
             <div className="bg-surface-2 rounded-lg px-3.5 py-3">
-              <p className="text-xs text-text-secondary mb-1">Updated</p>
+              <p className="text-xs text-text-secondary mb-1">Expired At</p>
               <p className="text-sm font-medium font-mono">
-                {new Date(link.updatedAt)?.toLocaleDateString(undefined, {
+                {new Date(link.expirationDate)?.toLocaleDateString(undefined, {
                   year: "numeric",
                   month: "short",
                   day: "numeric",

@@ -17,6 +17,8 @@ interface ShortLink {
   clicks: number;
   createdAt: string;
   updatedAt: string;
+  expirationDate: Date | string;
+  clickCount: number;
 }
 
 interface User {

@@ -22,6 +22,18 @@ export function setAccessToken(token: string | null) {
   else localStorage.removeItem(ACCESS_TOKEN_KEY);
 }
 
+function shouldSkipTokenRefresh(url: string | undefined): boolean {
+  if (!url) return false;
+
+  const authEndpoints = [
+    "/auth/login",
+    "/auth/register",
+    "/auth/refresh-token",
+  ];
+
+  return authEndpoints.some((endpoint) => url.includes(endpoint));
+}
+
 http.interceptors.request.use((config) => {
   const token = getAccessToken();
   if (token) {
@@ -36,7 +48,11 @@ http.interceptors.response.use(
   (response) => response,
   async (error) => {
     const original = error.config;
-    if ([401, 403].includes(error.response?.status) && !original._retry) {
+    if (
+      [401, 403].includes(error.response?.status) &&
+      !original._retry &&
+      !shouldSkipTokenRefresh(original.url)
+    ) {
       original._retry = true;
       try {
         if (!refreshPromise) {
@@ -55,7 +71,7 @@ http.interceptors.response.use(
         if (token) {
           original.headers.Authorization = `Bearer ${token}`;
           return http(original);
-        }
+        } else setAccessToken(null);
       } catch {
         setAccessToken(null);
       }

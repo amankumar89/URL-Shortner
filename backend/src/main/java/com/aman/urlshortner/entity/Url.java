@@ -28,12 +28,15 @@ public class Url {
     @Column(name = "target_url", nullable = false)
     private String targetUrl;
 
-    @Enumerated(EnumType.STRING)
     @Builder.Default
+    @Enumerated(EnumType.STRING)
     private UrlStatus status = UrlStatus.ACTIVE;
 
     @Column(name = "expiration_date")
     private LocalDateTime expirationDate = LocalDateTime.now().plusHours(24);
+
+    @Column(name = "click_count")
+    private int clickCount = 0;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

@@ -3,6 +3,7 @@ import { fetchMe, login, logout, register, update } from "@/lib/api";
 import { getAccessToken, setAccessToken } from "@/lib/http";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { getMessage } from "@/helper";
 
 export const ME_QUERY_KEY = ["me"] as const;
 
@@ -23,8 +24,8 @@ export function useLogin() {
       toast.success("Logged in successful");
       // queryClient.setQueryData(ME_QUERY_KEY, user);
     },
-    onError: () => {
-      toast.error("Failed to login");
+    onError: (error: any) => {
+      toast.error(getMessage("Failed to login", error));
       setAccessToken(null);
     },
   });
@@ -38,8 +39,8 @@ export function useRegister() {
       toast.success("Registered Successfully");
       // queryClient.setQueryData(ME_QUERY_KEY, user);
     },
-    onError: () => {
-      toast.error("Failed to register");
+    onError: (error: any) => {
+      toast.error(getMessage("Failed to register", error));
     },
   });
 }
@@ -56,8 +57,8 @@ export function useLogout() {
       queryClient.clear();
       setAccessToken(null);
     },
-    onError: () => {
-      toast.error("Failed to log out");
+    onError: (error) => {
+      toast.error(getMessage("Failed to log out", error));
     },
   });
 }
@@ -70,8 +71,8 @@ export function useUpdateUser() {
       toast.success("Updated");
       queryClient.setQueryData(ME_QUERY_KEY, user);
     },
-    onError: () => {
-      toast.error("Failed to update");
+    onError: (error: any) => {
+      toast.error(getMessage("Failed to update", error));
     },
   });
 }

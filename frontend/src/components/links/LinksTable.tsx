@@ -9,8 +9,9 @@ import { StatusBadge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { FolderSearch } from "lucide-react";
+import { getStatus } from "@/helper";
 
-type SortKey = "targetUrl" | "shortCode" | "status" | "clicks" | null;
+type SortKey = "targetUrl" | "shortCode" | "status" | "clickCount" | null;
 
 interface LinksTableProps {
   links: ShortLink[];
@@ -63,7 +64,7 @@ export function LinksTable({
     { key: "targetUrl", label: "Original URL", align: "left" },
     { key: "shortCode", label: "Short URL", align: "left" },
     { key: "status", label: "Status", align: "left" },
-    { key: "clicks", label: "Clicks", align: "right" },
+    { key: "clickCount", label: "Clicks", align: "right" },
   ];
 
   if (!sorted.length) {
@@ -85,12 +86,12 @@ export function LinksTable({
           <col className="w-[38%]" />
           <col className="w-[20%]" />
           <col className="w-[15%]" />
-          <col className="w-[12%]" />
+          <col className="w-[10%]" />
           <col className="w-[15%]" />
         </colgroup>
         <thead>
           <tr className="bg-surface-2">
-            {columns.map((c) => (
+            {columns?.map((c) => (
               <th
                 key={c.key}
                 onClick={() => handleSort(c.key)}
@@ -134,16 +135,17 @@ export function LinksTable({
                 <StatusBadge status={link?.status} />
               </td>
               <td className="px-3 py-2.5 text-right tabular-nums">
-                {link?.clicks?.toLocaleString()}
+                {link?.clickCount?.toLocaleString()}
               </td>
               <td className="px-3 py-2.5 text-right">
                 {showActions ? (
                   <Button
-                    variant="secondary"
+                    variant={link.status === "EXPIRED" ? "danger" : "secondary"}
                     size="sm"
                     onClick={() => onToggleStatus?.(link)}
+                    disabled={link.status === "EXPIRED"}
                   >
-                    {link?.status === "ACTIVE" ? "Pause" : "Activate"}
+                    {getStatus(link?.status)}
                   </Button>
                 ) : (
                   <button

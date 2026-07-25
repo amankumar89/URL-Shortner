@@ -37,6 +37,7 @@ export async function createLink(
   const res = await http.post("/url/shorten", {
     targetUrl: payload.url,
     shortCode: payload.code,
+    status: payload.status,
   });
   return res.data.data;
 }

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { LogoMark } from "@/components/ui/Logo";
 import { Input, Label } from "@/components/ui/Input";
@@ -20,14 +20,14 @@ export default function RegisterPage() {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault();
+  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
     mutate(form, { onSuccess: () => navigate("/", { replace: true }) });
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-[380px] animate-fade-up">
+      <div className="w-full max-w-95 animate-fade-up">
         <div className="flex items-center gap-2 justify-center mb-8">
           <div className="h-8 w-8 rounded-md bg-accent-soft flex items-center justify-center">
             <LogoMark size={18} />

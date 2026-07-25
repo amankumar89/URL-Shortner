@@ -3,31 +3,20 @@ import { StatCard } from "@/components/dashboard/StatCard";
 import { Card } from "@/components/ui/Card";
 import { useLinks } from "@/hooks/useLinks";
 import { MousePointerClick, Trophy, Activity, Percent } from "lucide-react";
-
-const statusStyles: Record<LinkStatus, { bar: string; text: string }> = {
-  ACTIVE: { bar: "bg-success", text: "text-success" },
-  PAUSED: { bar: "bg-warning", text: "text-warning" },
-  EXPIRED: { bar: "bg-danger", text: "text-danger" },
-};
-
-const statusSoftBg: Record<LinkStatus, string> = {
-  ACTIVE: "bg-success-soft",
-  PAUSED: "bg-warning-soft",
-  EXPIRED: "bg-danger-soft",
-};
+import { statusSoftBg, statusStyles } from "@/helper";
 
 export default function AnalyticsPage() {
   const { data, isLoading } = useLinks();
   const links = data?.links ?? [];
   const total = links.length;
 
-  const totalClicks = links.reduce((s, l) => s + (l.clicks ?? 0), 0);
-  const top = [...links].sort((a, b) => b.clicks - a.clicks)[0];
+  const totalClicks = links.reduce((s, l) => s + (l.clickCount ?? 0), 0);
+  const top = [...links].sort((a, b) => b.clickCount - a.clickCount)[0];
   const active = links.filter((l) => l.status === "ACTIVE").length;
   const activeRate = total ? Math.round((active / total) * 100) : 0;
 
-  const maxClicks = Math.max(1, ...links.map((l) => l.clicks));
-  const sortedByClicks = [...links].sort((a, b) => b.clicks - a.clicks);
+  const maxClicks = Math.max(1, ...links.map((l) => l.clickCount));
+  const sortedByClicks = [...links].sort((a, b) => b.clickCount - a.clickCount);
 
   const statusCounts: Record<LinkStatus, number> = {
     ACTIVE: 0,
@@ -73,7 +62,7 @@ export default function AnalyticsPage() {
           <Card className="p-4 mb-8">
             <div className="flex flex-col gap-3.5">
               {sortedByClicks.map((link) => {
-                const pct = Math.round((link?.clicks / maxClicks) * 100);
+                const pct = Math.round((link?.clickCount / maxClicks) * 100);
                 return (
                   <div key={link?.id}>
                     <div className="flex items-center justify-between text-xs mb-1.5">
@@ -81,7 +70,7 @@ export default function AnalyticsPage() {
                         {link?.shortCode}
                       </span>
                       <span className="font-medium tabular-nums">
-                        {link?.clicks?.toLocaleString()}
+                        {link?.clickCount?.toLocaleString()}
                       </span>
                     </div>
                     <div className="h-2 rounded-full bg-surface-2 overflow-hidden">

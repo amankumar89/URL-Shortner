@@ -4,6 +4,7 @@ import { LogoMark } from "@/components/ui/Logo";
 import { Input, Label } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useLogin } from "@/hooks/useAuth";
+import { getMessage } from "@/helper";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -64,7 +65,7 @@ export default function LoginPage() {
 
             {error && (
               <p className="text-xs text-danger">
-                {(error as Error).message || "Something went wrong."}
+                {getMessage("Something went wrong.", error)}
               </p>
             )}
 

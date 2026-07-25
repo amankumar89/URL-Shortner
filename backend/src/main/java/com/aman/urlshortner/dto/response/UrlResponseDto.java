@@ -17,6 +17,8 @@ public class UrlResponseDto {
     private String shortCode;
     private String targetUrl;
     private UrlStatus status;
+    private LocalDateTime expirationDate;
+    private int clickCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 

@@ -6,7 +6,7 @@ export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { data } = useMe();
   const token = getAccessToken();
 
-  if (data?.id && !token) {
+  if (!data?.id && !token) {
     return <Navigate to="/login" replace />;
   }
   return <>{children}</>;

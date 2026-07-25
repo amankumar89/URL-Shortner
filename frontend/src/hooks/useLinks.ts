@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createLink, fetchLinks, toggleLinkStatus } from "@/lib/api";
 import toast from "react-hot-toast";
+import { getMessage } from "@/helper";
 
 export const LINKS_QUERY_KEY = ["links"] as const;
 
@@ -19,8 +20,8 @@ export function useCreateLink() {
       toast.success("Link created");
       queryClient.invalidateQueries({ queryKey: LINKS_QUERY_KEY });
     },
-    onError: () => {
-      toast.error("Failed to create link");
+    onError: (error: any) => {
+      toast.error(getMessage("Failed to create link", error));
     },
   });
 }
@@ -33,8 +34,8 @@ export function useToggleLinkStatus() {
       toast.success("Status updated");
       queryClient.invalidateQueries({ queryKey: LINKS_QUERY_KEY });
     },
-    onError: () => {
-      toast.error("Failed to update status");
+    onError: (error: any) => {
+      toast.error(getMessage("Failed to update status", error));
     },
   });
 }

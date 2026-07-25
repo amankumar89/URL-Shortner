@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { FormEvent } from "react";
+import type { SubmitEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check, Link2 } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -7,17 +7,18 @@ import { Input, Label, Select } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { useCreateLink } from "@/hooks/useLinks";
+import { getMessage } from "@/helper";
 
 export default function CreateLinkPage() {
   const navigate = useNavigate();
   const { mutate, isPending, error, reset } = useCreateLink();
   const [original, setOriginal] = useState("");
   const [alias, setAlias] = useState("");
-  const [status, setStatus] = useState<LinkStatus>("Active");
+  const [status, setStatus] = useState<LinkStatus>("ACTIVE");
   const [successShort, setSuccessShort] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
 
-  function handleSubmit(e: FormEvent) {
+  function handleSubmit(e: SubmitEvent<HTMLFormElement>) {
     e.preventDefault();
     setValidationError(null);
     reset();
@@ -37,17 +38,18 @@ export default function CreateLinkPage() {
       { url: original.trim(), code: alias.trim() || undefined, status },
       {
         onSuccess: (link) => {
-          setSuccessShort(link.short);
+          setSuccessShort(link.shortCode);
           setTimeout(() => navigate("/"), 900);
         },
       },
     );
   }
 
-  const displayedError = validationError ?? (error as Error | null)?.message;
+  const displayedError =
+    validationError ?? getMessage("Failed to create link", error);
 
   return (
-    <div className="max-w-[440px] animate-fade-up">
+    <div className="max-w-110 animate-fade-up">
       <PageHeader
         title="Create a short URL"
         subtitle="Turn a long link into something easy to share and track."
@@ -81,8 +83,8 @@ export default function CreateLinkPage() {
               value={status}
               onChange={(e) => setStatus(e.target.value as LinkStatus)}
             >
-              <option value="Active">Active</option>
-              <option value="Paused">Paused</option>
+              <option value="ACTIVE">Active</option>
+              <option value="PAUSED">Paused</option>
             </Select>
           </div>
 

@@ -80,6 +80,11 @@ public class UrlService {
         Url url = urlRepository
                 .findByShortCode(shortCode)
                 .orElseThrow(() -> new ResourceNotFoundException("URL not found"));
+        if(url.getStatus() == UrlStatus.EXPIRED) {
+            return "failed";
+        }
+        url.setClickCount(url.getClickCount() + 1);
+        urlRepository.save(url);
         return url.getTargetUrl();
     }
 

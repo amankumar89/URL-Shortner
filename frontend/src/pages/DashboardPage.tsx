@@ -23,7 +23,7 @@ export default function DashboardPage() {
   const links = data?.links ?? [];
 
   const total = links?.length;
-  const totalClicks = links?.reduce((s, l) => s + (l?.clicks ?? 0), 0);
+  const totalClicks = links?.reduce((s, l) => s + (l?.clickCount ?? 0), 0);
   const active = links?.filter((l) => l.status === "ACTIVE").length;
   const avg = total ? Math.round(totalClicks / total) : 0;
 
