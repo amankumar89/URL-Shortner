@@ -18,7 +18,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -33,11 +35,13 @@ public class UrlService {
         Users user = userRepository
                 .findById(currentUserService.getUserId())
                 .orElseThrow(() -> new AuthorizationDeniedException("Forbidden"));
-        System.out.println(requestUrl.toString());
         Url url = new Url();
         url.setShortCode(requestUrl.getShortCode());
         url.setTargetUrl(requestUrl.getTargetUrl());
         url.setUser(user);
+        if(requestUrl.getStatus() != null){
+            url.setStatus(requestUrl.getStatus());
+        }
         return modelMapper.map(urlRepository.save(url), ShortenUrlResponseDto.class);
     }
 
@@ -90,5 +94,37 @@ public class UrlService {
                 );
 
         urlRepository.delete(url);
+    }
+
+    @Transactional
+    public UrlStatus toggleStatus(Long id) {
+        Url url = urlRepository
+                .findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Url not found"));
+        checkAndExpireIfNeeded(url);
+        if(url.getStatus() != UrlStatus.EXPIRED){
+            UrlStatus currentStatus = url.getStatus();
+            UrlStatus newStatus = getNextStatus(url.getStatus());
+            url.setStatus(newStatus);
+            urlRepository.save(url);
+            return newStatus;
+        }else return url.getStatus();
+    }
+
+    private void checkAndExpireIfNeeded(Url url){
+        if (url.getExpirationDate() != null &&
+                url.getExpirationDate().isBefore(LocalDateTime.now()) &&
+                url.getStatus() != UrlStatus.EXPIRED) {
+            url.setStatus(UrlStatus.EXPIRED);
+            urlRepository.save(url);
+        }
+    }
+
+    private UrlStatus getNextStatus(UrlStatus status){
+        return switch (status){
+            case ACTIVE -> UrlStatus.PAUSED;
+            case PAUSED -> UrlStatus.ACTIVE;
+            case EXPIRED -> UrlStatus.EXPIRED;
+        };
     }
 }

@@ -54,9 +54,20 @@ public class UrlController {
         return ApiResponse.redirect(urlString);
     }
 
+    @GetMapping("/analytics")
+    public ResponseEntity<ApiResponse<Void>> analytics(@PathVariable String shortCode) {
+//        String urlString = urlService.redirect(shortCode);
+        return ApiResponse.ok("GET Analytics");
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<ApiResponse<Void>> deleteShortenUrl(@PathVariable Long id) {
         urlService.deleteUrl(id);
         return ApiResponse.noContent("URL deleted for id" + id);
+    }
+
+    @PatchMapping("/{id}/toggle-status")
+    public ResponseEntity<ApiResponse<UrlStatus>> toggleStatus(@PathVariable Long id) {
+        return ApiResponse.ok("Status updated", urlService.toggleStatus(id));
     }
 }

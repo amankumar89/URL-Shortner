@@ -1,5 +1,8 @@
 package com.aman.urlshortner.dto.request;
 
+import com.aman.urlshortner.entity.UrlStatus;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,4 +19,7 @@ public class ShortenUrlRequestDto {
     @URL(message = "Invalid TargetUrl")
     private String targetUrl;
     private String shortCode;
+
+    @Enumerated(EnumType.STRING)
+    private UrlStatus status;
 }

@@ -9,6 +9,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Entity
@@ -30,6 +31,9 @@ public class Url {
     @Enumerated(EnumType.STRING)
     @Builder.Default
     private UrlStatus status = UrlStatus.ACTIVE;
+
+    @Column(name = "expiration_date")
+    private LocalDateTime expirationDate = LocalDateTime.now().plusHours(24);
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)

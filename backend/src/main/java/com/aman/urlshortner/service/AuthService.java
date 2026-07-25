@@ -90,24 +90,30 @@ public class AuthService {
     }
 
     public RefreshTokenResponseDto generateRefreshToken(String refreshToken, HttpServletResponse response) {
+        System.out.println("get refresh token" +refreshToken);
         if (refreshToken == null || refreshToken.isBlank()) {
             throw new InvalidCredentialsException("Refresh token is missing.");
         }
         RefreshToken storedToken = refreshTokenRepository
                 .findByToken(refreshToken)
                 .orElseThrow(() -> new InvalidCredentialsException("Invalid refresh token"));
+        System.out.println("get repo refresh token" +storedToken);
 
         if (storedToken.isRevoked()) {
+        System.out.println("is revoked " +storedToken);
             throw new InvalidCredentialsException("Refresh token has been revoked.");
         }
 
         if (storedToken.getExpiryDate().isBefore(LocalDateTime.now())) {
+        System.out.println("is expired " +storedToken);
             refreshTokenRepository.delete(storedToken);
             throw new InvalidCredentialsException("Refresh token has expired.");
         }
         Users user = storedToken.getUser();
+        System.out.println("storedToken get User " +user.toString());
         refreshTokenRepository.delete(storedToken);
         RefreshToken newRefreshToken = createRefreshToken(user);
+        System.out.println("new refresh token" +newRefreshToken);
         refreshTokenRepository.save(newRefreshToken);
 
         cookieUtil.addRefreshCookie(

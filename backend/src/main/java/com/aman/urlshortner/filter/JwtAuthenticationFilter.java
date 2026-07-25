@@ -2,6 +2,7 @@ package com.aman.urlshortner.filter;
 
 import com.aman.urlshortner.service.CustomUserDetailsService;
 import com.aman.urlshortner.service.JwtService;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,7 +10,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.jspecify.annotations.NonNull;
 import org.springframework.http.HttpHeaders;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,9 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
-        } catch (Exception ex) {
-            throw new BadCredentialsException("Unauthorized: Invalid token");
-        }
+        } catch (JwtException | IllegalArgumentException ignored) {}
         filterChain.doFilter(request, response);
     }
 }

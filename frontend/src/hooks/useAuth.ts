@@ -25,6 +25,7 @@ export function useLogin() {
     },
     onError: () => {
       toast.error("Failed to login");
+      setAccessToken(null);
     },
   });
 }
