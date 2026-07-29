@@ -1,3 +1,34 @@
+server:
+  port: ${PORT:3000}
 spring:
-  profiles:
-    active: dev
+  application:
+    name: URL-Shortner
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://ep-broad-base-aoa76d0h-pooler.c-2.ap-southeast-1.aws.neon.tech:5432/neondb?sslmode=require}
+    username: ${SPRING_DATASOURCE_USERNAME:neondb_owner}
+    password: ${SPRING_DATASOURCE_PASSWORD:npg_dCAN6wBkJ3SV}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+jwt:
+  secret: ${JWT_SECRET:4c59b65c7bc7ef0fdc6f902b35317e2cb3e9b353db6aebdf72df9c1d7160cfa0}
+  access-token-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION:900000}
+  refresh-token-expiration: ${JWT_REFRESH_TOKEN_EXPIRATION:604800000}
+
+cookie:
+  secure: ${COOKIE_SECURE:false}
+  same-site: ${COOKIE_SAME_SITE:Lax}
+
+cors:
+  allowed-origins: ${FRONTEND_URL:http://localhost:5173}
+
+logging:
+  level:
+    org:
+      springframework:
+        security: ${LOG_LEVEL_SECURITY:TRACE}
