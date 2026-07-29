@@ -11,7 +11,7 @@ export default function SettingsPage() {
   const { mutate, isPending } = useUpdateUser();
 
   const [form, setForm] = useState<UpdateUser | null>(null);
-  const [saved, setSaved] = useState(false);
+  const [saved] = useState(false);
 
   useEffect(() => {
     if (user && !form)

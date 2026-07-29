@@ -20,7 +20,7 @@ export function useLogin() {
   // const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: LoginPayload) => login(payload),
-    onSuccess: (user) => {
+    onSuccess: () => {
       toast.success("Logged in successful");
       // queryClient.setQueryData(ME_QUERY_KEY, user);
     },
@@ -35,7 +35,7 @@ export function useRegister() {
   // const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: RegisterPayload) => register(payload),
-    onSuccess: (user) => {
+    onSuccess: () => {
       toast.success("Registered Successfully");
       // queryClient.setQueryData(ME_QUERY_KEY, user);
     },
