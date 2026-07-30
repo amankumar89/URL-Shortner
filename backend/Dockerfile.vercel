@@ -27,4 +27,11 @@ USER spring
 
 COPY --from=build /app/target/*.jar app.jar
 
-ENTRYPOINT ["sh", "-c", "echo '=== ENV ===' && env | sort && echo '============' && ${JAVA_HOME}/bin/java -Xmx256m -Xss512k -XX:+UseSerialGC -Dserver.port=${PORT} -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "\
+echo PORT=$PORT; \
+echo SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL:+SET}; \
+echo SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME:+SET}; \
+echo SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD:+SET}; \
+echo JWT_SECRET=${JWT_SECRET:+SET}; \
+echo FRONTEND_URL=$FRONTEND_URL; \
+exec ${JAVA_HOME}/bin/java -Dserver.port=${PORT} -jar app.jar"]
