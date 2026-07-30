@@ -1,0 +1,18 @@
+# ---------- Build Stage ----------
+FROM maven:3.9.0-eclipse-temurin-17-alpine AS build
+
+WORKDIR /src
+
+COPY pom.xml .
+COPY src ./src
+
+RUN mvn clean package -DskipTests
+
+# ---------- Runtime Stage ----------
+FROM eclipse-temurin:17-jre-alpine
+
+WORKDIR /app
+
+COPY --from=build /src/target/*.jar app.jar
+
+CMD ["java", "-jar", "app.jar"]
