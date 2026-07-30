@@ -27,6 +27,4 @@ USER spring
 
 COPY --from=build /app/target/*.jar app.jar
 
-ENTRYPOINT ["sh", "-c", "${JAVA_HOME}/bin/java -Xmx256m -Xss512k
-
--XX:+UseSerialGC -Dserver.port=${PORT} -jar app.jar"]
+ENTRYPOINT ["sh", "-c", "${JAVA_HOME}/bin/java -Xmx256m -Xss512k -XX:+UseSerialGC -Dserver.port=${PORT} -jar app.jar"]
