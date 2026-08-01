@@ -1,37 +1,22 @@
-# ---------- Build stage ----------
+# Build stage
 FROM maven:3.9-eclipse-temurin-17 AS build
-
 WORKDIR /app
 
 COPY pom.xml .
-
 RUN mvn -B dependency:go-offline
 
 COPY src ./src
+RUN mvn -B -DskipTests package
 
-RUN mvn -B clean package -DskipTests
-
-# ---------- Runtime stage ----------
-
+# Runtime stage — Vercel injects $PORT (default 80)
 FROM eclipse-temurin:17-jre
-
 WORKDIR /app
 
-ENV JAVA_HOME=/opt/java/openjdk
-
-ENV PATH="${JAVA_HOME}/bin:${PATH}"
-
 RUN groupadd -r spring && useradd -r -g spring spring
-
 USER spring
 
 COPY --from=build /app/target/*.jar app.jar
 
-ENTRYPOINT ["sh", "-c", "\
-echo PORT=$PORT; \
-echo SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL:+SET}; \
-echo SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME:+SET}; \
-echo SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD:+SET}; \
-echo JWT_SECRET=${JWT_SECRET:+SET}; \
-echo FRONTEND_URL=$FRONTEND_URL; \
-exec ${JAVA_HOME}/bin/java -Dserver.port=${PORT} -jar app.jar"]
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom"
+
+ENTRYPOINT ["sh", "-c", "exec java $JAVA_OPTS -Dserver.port=${PORT} -jar app.jar"]

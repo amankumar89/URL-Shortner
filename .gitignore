@@ -33,3 +33,5 @@ build/
 .vscode/
 *-dev.yaml
 *.env*
+!.env.example
+!**/.env.example
