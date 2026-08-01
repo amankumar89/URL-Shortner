@@ -1,0 +1,22 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_PORT: ${PORT:-8080}
+    container_name: url-shortner-backend
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8080}:${PORT:-8080}"
+    env_file:
+      - .env
+    environment:
+      PORT: ${PORT:-8080}
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-default}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:$${PORT:-8080}/health > /dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s

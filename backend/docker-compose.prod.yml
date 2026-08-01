@@ -1,0 +1,10 @@
+# Production overrides. Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+services:
+  backend:
+    restart: always
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      COOKIE_SECURE: "true"
+      COOKIE_SAME_SITE: Strict
+      LOG_LEVEL_SECURITY: WARN

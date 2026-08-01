@@ -1,0 +1,10 @@
+target/
+.idea/
+*.iml
+.env
+.env.*
+!.env.example
+.git/
+.gitignore
+HELP.md
+src/main/resources/application-dev.yaml

@@ -1,0 +1,18 @@
+spring:
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+logging:
+  level:
+    root: INFO
+    org:
+      springframework:
+        security: ${LOG_LEVEL_SECURITY:WARN}
+        boot:
+          autoconfigure: WARN
+        orm:
+          jpa: WARN
+      hibernate: WARN
