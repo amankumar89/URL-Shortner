@@ -8,7 +8,10 @@ import { useLinks, useToggleLinkStatus } from "@/hooks/useLinks";
 import { getStatus } from "@/helper";
 import toast from "react-hot-toast";
 
-const baseUrl = "http://localhost:3000/api";
+const baseUrl =
+  import.meta.env.VITE_API_BASE_URL ??
+  (import.meta.env.PROD ? "" : "http://localhost:3000");
+
 
 export default function LinkDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -46,7 +49,7 @@ export default function LinkDetailPage() {
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${baseUrl}/url/${link?.shortCode}`,
+                    `${baseUrl}/api/url/${link?.shortCode}`,
                   );
                   toast.success("Copied");
                 }}
@@ -56,7 +59,7 @@ export default function LinkDetailPage() {
                 <Copy size={14} />
               </button>
               <a
-                href={`${baseUrl}/url/${link?.shortCode}`}
+                href={`${baseUrl}/api/url/${link?.shortCode}`}
                 target="_blank"
                 rel="noreferrer"
                 className="text-[13px] text-text-secondary break-all inline-flex items-center gap-1.5 hover:text-text-primary transition-colors mb-5"
