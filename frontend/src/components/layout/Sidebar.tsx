@@ -58,7 +58,7 @@ export function Sidebar() {
       {/* MOBILE BOTTOM NAV - Uses identical styling tokens */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border-soft bg-background p-2 pb-safe">
         <div className="flex items-center justify-around gap-1">
-          {navItems.map(({ to, label, icon: Icon, end }) => (
+          {navItems.map(({ to, icon: Icon, end }) => (
             <NavLink
               key={to}
               to={to}
