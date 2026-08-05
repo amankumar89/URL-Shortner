@@ -43,7 +43,7 @@ export default function DashboardPage() {
         }
       />
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
         <StatCard
           label="Total links"
           value={total?.toLocaleString()}

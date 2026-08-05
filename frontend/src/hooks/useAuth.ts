@@ -17,7 +17,7 @@ export function useMe() {
 }
 
 export function useLogin() {
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (payload: LoginPayload) => login(payload),
     onSuccess: () => {
@@ -26,6 +26,7 @@ export function useLogin() {
     },
     onError: (error: any) => {
       toast.error(getMessage("Failed to login", error));
+      queryClient.clear();
       setAccessToken(null);
     },
   });
@@ -58,6 +59,7 @@ export function useLogout() {
       setAccessToken(null);
     },
     onError: (error) => {
+      queryClient.clear();
       toast.error(getMessage("Failed to log out", error));
     },
   });

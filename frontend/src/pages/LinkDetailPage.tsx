@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { StatusBadge } from "@/components/ui/Badge";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { useLinks, useToggleLinkStatus } from "@/hooks/useLinks";
+import { useDeleteLink, useLinks, useToggleLinkStatus } from "@/hooks/useLinks";
 import { getStatus } from "@/helper";
 import toast from "react-hot-toast";
 
@@ -17,7 +17,9 @@ export default function LinkDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { data } = useLinks();
-  const { mutate: toggleStatus, isPending } = useToggleLinkStatus();
+  const { mutate: toggleStatus, isPending: isTogglePending } = useToggleLinkStatus();
+  const { mutate: deleteLink, isPending: isDeletePending } = useDeleteLink();
+
   const links = data?.links ?? [];
 
   const link = links.find((l) => l.id === Number(id));
@@ -41,7 +43,7 @@ export default function LinkDetailPage() {
         </Card>
       ) : (
         <Card className="p-6">
-          <div className="flex items-center justify-between mb-1">
+          <div className="flex flex-wrap items-center justify-between mb-1">
             <div className="flex items-center gap-2">
               <p className="font-mono text-lg font-medium text-accent">
                 {link?.shortCode}
@@ -49,7 +51,7 @@ export default function LinkDetailPage() {
               <button
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${baseUrl}/api/url/${link?.shortCode}`,
+                    `${baseUrl}/${link?.shortCode}`,
                   );
                   toast.success("Copied");
                 }}
@@ -59,7 +61,7 @@ export default function LinkDetailPage() {
                 <Copy size={14} />
               </button>
               <a
-                href={`${baseUrl}/api/url/${link?.shortCode}`}
+                href={`${baseUrl}/${link?.shortCode}`}
                 target="_blank"
                 rel="noreferrer"
                 className="text-[13px] text-text-secondary break-all inline-flex items-center gap-1.5 hover:text-text-primary transition-colors mb-5"
@@ -67,22 +69,13 @@ export default function LinkDetailPage() {
                 <ExternalLink size={12} className="shrink-0" />
               </a>
             </div>
-            <Button
-              size="sm"
-              variant={link.status === "EXPIRED" ? "danger" : "secondary"}
-              loading={isPending}
-              onClick={() => toggleStatus(link.id)}
-              disabled={link.status === "EXPIRED"}
-            >
-              {getStatus(link.status)}
-            </Button>
           </div>
 
           <p className="text-[13px] text-text-secondary break-all inline-flex items-center gap-1.5 hover:text-text-primary transition-colors mb-5 disabled">
             {link.targetUrl}
           </p>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             <div className="bg-surface-2 rounded-lg px-3.5 py-3">
               <p className="text-xs text-text-secondary mb-1">Status</p>
               <StatusBadge status={link?.status} />
@@ -117,6 +110,25 @@ export default function LinkDetailPage() {
               <p className="text-xs text-text-secondary mb-1">Alias</p>
               <p className="text-sm font-medium font-mono">{link.code}</p>
             </div> */}
+          </div>
+          <div className="mt-4 flex flex-wrap gap-4 justify-end">
+            <Button
+              size="sm"
+              variant={link.status === "EXPIRED" ? "danger" : "secondary"}
+              loading={isTogglePending}
+              onClick={() => toggleStatus(link.id)}
+              disabled={link.status === "EXPIRED"}
+            >
+              {getStatus(link.status)}
+            </Button>
+            <Button
+              size="sm"
+              variant="danger"
+              loading={isDeletePending}
+              onClick={() => deleteLink(link.id)}
+            >
+              Delete
+            </Button>
           </div>
         </Card>
       )}

@@ -10,7 +10,7 @@ export function PageHeader({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex items-start justify-between mb-6 gap-4">
+    <div className="flex flex-wrap items-start justify-between mb-6 gap-4">
       <div>
         <h1 className="font-display text-xl font-semibold text-text-primary tracking-tight">
           {title}
