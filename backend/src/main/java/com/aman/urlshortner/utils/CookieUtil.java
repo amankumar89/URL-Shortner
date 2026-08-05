@@ -33,7 +33,7 @@ public class CookieUtil {
         ResponseCookie cookie = ResponseCookie.from(REFRESH_COOKIE, token)
                 .httpOnly(true)
                 .secure(secure)
-                .sameSite("Lax")   // or "None" if frontend is on another origin
+                .sameSite("none")   // or "None" if frontend is on another origin
                 .path("/")
                 .maxAge(maxAge)
                 .build();
