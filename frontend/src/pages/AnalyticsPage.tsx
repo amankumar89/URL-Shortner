@@ -35,7 +35,7 @@ export default function AnalyticsPage() {
 
       {isLoading ? null : (
         <>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
             <StatCard
               label="Total clicks"
               value={totalClicks.toLocaleString()}

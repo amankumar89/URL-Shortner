@@ -61,11 +61,11 @@ export function LinksTable({
     label: string;
     align: "left" | "right";
   }[] = [
-    { key: "targetUrl", label: "Original URL", align: "left" },
-    { key: "shortCode", label: "Short URL", align: "left" },
-    { key: "status", label: "Status", align: "left" },
-    { key: "clickCount", label: "Clicks", align: "right" },
-  ];
+      { key: "targetUrl", label: "Original URL", align: "left" },
+      { key: "shortCode", label: "Short URL", align: "left" },
+      { key: "status", label: "Status", align: "left" },
+      { key: "clickCount", label: "Clicks", align: "right" },
+    ];
 
   if (!sorted.length) {
     return (
@@ -98,9 +98,8 @@ export function LinksTable({
                 className={`px-3 py-2.5 font-medium text-text-secondary cursor-pointer select-none text-${c.align}`}
               >
                 <div
-                  className={`flex items-center gap-1 ${
-                    c.align === "right" ? "justify-end" : "justify-start"
-                  }`}
+                  className={`flex items-center gap-1 ${c.align === "right" ? "justify-end" : "justify-start"
+                    }`}
                 >
                   {c.label}
                   <SortIcon active={sortKey === c.key} dir={sortDir} />

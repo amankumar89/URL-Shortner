@@ -20,8 +20,10 @@ import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,13 +33,16 @@ public class UrlService {
     private final CurrentUserService currentUserService;
     private final UserRepository userRepository;
 
+    @Transactional
     public ShortenUrlResponseDto createShortenUrl(ShortenUrlRequestDto requestUrl) {
         Users user = userRepository
                 .findById(currentUserService.getUserId())
                 .orElseThrow(() -> new AuthorizationDeniedException("Forbidden"));
         Url url = new Url();
-        url.setShortCode(requestUrl.getShortCode());
         url.setTargetUrl(requestUrl.getTargetUrl());
+        if (url.getShortCode() == null || url.getShortCode().isBlank()){
+            url.setShortCode(generateShortCode(6));
+        } else url.setShortCode(requestUrl.getShortCode());
         url.setUser(user);
         if(requestUrl.getStatus() != null){
             url.setStatus(requestUrl.getStatus());
@@ -88,6 +93,7 @@ public class UrlService {
         return url.getTargetUrl();
     }
 
+    @Transactional
     public void deleteUrl(Long id) {
         Long userId = currentUserService.getUserId();
         if (userId == null) {
@@ -131,5 +137,11 @@ public class UrlService {
             case PAUSED -> UrlStatus.ACTIVE;
             case EXPIRED -> UrlStatus.EXPIRED;
         };
+    }
+
+    public static String generateShortCode(int length) {
+        return new SecureRandom().ints(length, 0, 62)
+                .mapToObj(i -> String.valueOf("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".charAt(i)))
+                .collect(Collectors.joining());
     }
 }

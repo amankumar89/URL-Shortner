@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { createLink, fetchLinks, toggleLinkStatus } from "@/lib/api";
+import { createLink, deleteLink, fetchLinks, toggleLinkStatus } from "@/lib/api";
 import toast from "react-hot-toast";
 import { getMessage } from "@/helper";
 
@@ -36,6 +36,20 @@ export function useToggleLinkStatus() {
     },
     onError: (error: any) => {
       toast.error(getMessage("Failed to update status", error));
+    },
+  });
+}
+
+export function useDeleteLink() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: number) => deleteLink(id),
+    onSuccess: () => {
+      toast.success("Link deleted");
+      queryClient.invalidateQueries({ queryKey: LINKS_QUERY_KEY });
+    },
+    onError: (error: any) => {
+      toast.error(getMessage("Failed to delete link", error));
     },
   });
 }

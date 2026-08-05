@@ -44,7 +44,7 @@ public class WebSecurityConfig {
                                         "/api/auth/register",
                                         "/api/auth/login",
                                         "/api/auth/refresh-token",
-                                        "/api/url/{shortCode}",
+                                        "/{shortCode}",
                                         "/health"
                                 ).permitAll()
                                 .anyRequest()
@@ -85,7 +85,7 @@ public class WebSecurityConfig {
         configuration.setAllowedOrigins(List.of(origins));
 
         // 2. Explicitly list methods you actually use
-        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "PATCH", "POST", "PUT", "DELETE", "OPTIONS"));
 
         // 3. List specific headers if possible, otherwise "*" is acceptable for APIs
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "Cookie", "set-cookie"));

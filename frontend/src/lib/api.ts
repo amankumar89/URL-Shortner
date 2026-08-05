@@ -46,3 +46,8 @@ export async function toggleLinkStatus(id: number): Promise<ShortLink> {
   const res = await http.patch(`/url/${id}/toggle-status`);
   return res.data.data;
 }
+
+export async function deleteLink(id: number): Promise<void> {
+  const res = await http.delete(`/url/${id}`);
+  return res?.data?.data;
+}
