@@ -50,15 +50,6 @@ public class UrlController {
         return ApiResponse.ok("All URLs fetched", lists);
     }
 
-    @GetMapping("/{shortCode}")
-    public ResponseEntity<ApiResponse<Void>> redirectToUrl(@PathVariable String shortCode) {
-        String urlString = urlService.redirect(shortCode);
-        if(Objects.equals(urlString, "failed")) {
-            return ApiResponse.badRequest("Expired url");
-        }
-        return ApiResponse.redirect(urlString);
-    }
-
     @GetMapping("/analytics")
     public ResponseEntity<ApiResponse<Void>> analytics(@PathVariable String shortCode) {
 //        String urlString = urlService.redirect(shortCode);
