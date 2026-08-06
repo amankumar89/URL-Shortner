@@ -77,6 +77,7 @@ http.interceptors.response.use(
         } else setAccessToken(null);
       } catch {
         setAccessToken(null);
+        window.location.href = '/';
       }
     }
     return Promise.reject(error);

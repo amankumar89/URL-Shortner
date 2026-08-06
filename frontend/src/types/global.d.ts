@@ -50,6 +50,7 @@ interface CreateLinkPayload {
   url: string;
   code?: string;
   status?: LinkStatus;
+  expirationDate?: string;
 }
 interface ApiEnvelope<T> {
   success: boolean;
