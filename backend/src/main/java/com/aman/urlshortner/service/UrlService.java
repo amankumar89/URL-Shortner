@@ -39,14 +39,29 @@ public class UrlService {
                 .findById(currentUserService.getUserId())
                 .orElseThrow(() -> new AuthorizationDeniedException("Forbidden"));
         Url url = new Url();
+
         url.setTargetUrl(requestUrl.getTargetUrl());
-        if (url.getShortCode() == null || url.getShortCode().isBlank()){
+
+        if (requestUrl.getShortCode() == null || requestUrl.getShortCode().isBlank()){
+            System.out.println("insdie shortcode if");
             url.setShortCode(generateShortCode(6));
         } else url.setShortCode(requestUrl.getShortCode());
+
         url.setUser(user);
+
         if(requestUrl.getStatus() != null){
             url.setStatus(requestUrl.getStatus());
         }
+
+        if(requestUrl.getExpirationDate() == null || requestUrl.getExpirationDate().isBlank()) {
+            System.out.println("insdie date time if");
+            url.setExpirationDate(LocalDateTime.now().plusHours(24));
+        } else {
+            System.out.println("insdie date time else");
+            LocalDateTime dateTime = LocalDateTime.parse(requestUrl.getExpirationDate());
+            url.setExpirationDate(dateTime);
+        }
+
         return modelMapper.map(urlRepository.save(url), ShortenUrlResponseDto.class);
     }
 

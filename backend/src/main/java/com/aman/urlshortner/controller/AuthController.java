@@ -22,7 +22,6 @@ public class AuthController {
 
     @PostMapping("/register") // register
     public ResponseEntity<ApiResponse<RegisterResponseDto>> register(@RequestBody @Valid RegisterRequestDto registerRequestDto) {
-        System.out.println("registerRequestDto: " + registerRequestDto);
         return ApiResponse.created("User created", authService.registerUser(registerRequestDto));
     }
 

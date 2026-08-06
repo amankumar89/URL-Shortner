@@ -9,7 +9,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 @Entity
@@ -33,7 +32,7 @@ public class Url {
     private UrlStatus status = UrlStatus.ACTIVE;
 
     @Column(name = "expiration_date")
-    private LocalDateTime expirationDate = LocalDateTime.now().plusHours(24);
+    private LocalDateTime expirationDate;
 
     @Column(name = "click_count")
     private int clickCount = 0;

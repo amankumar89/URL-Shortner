@@ -22,4 +22,5 @@ public class ShortenUrlRequestDto {
 
     @Enumerated(EnumType.STRING)
     private UrlStatus status;
+    private String expirationDate;
 }
