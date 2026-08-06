@@ -15,6 +15,7 @@ export default function CreateLinkPage() {
   const [original, setOriginal] = useState("");
   const [alias, setAlias] = useState("");
   const [status, setStatus] = useState<LinkStatus>("ACTIVE");
+  const [expiry, setExpiry] = useState<string>("");
   const [successShort, setSuccessShort] = useState<string | null>(null);
   const [validationError, setValidationError] = useState<string | null>(null);
 
@@ -34,8 +35,13 @@ export default function CreateLinkPage() {
       return;
     }
 
-    mutate(
-      { url: original.trim(), code: alias.trim() || undefined, status },
+    const payload = {
+      url: original.trim(),
+      code: alias.trim() || undefined,
+      status,
+      expirationDate: expiry
+    };
+    mutate(payload,
       {
         onSuccess: (link) => {
           setSuccessShort(link.shortCode);
@@ -86,6 +92,16 @@ export default function CreateLinkPage() {
               <option value="ACTIVE">Active</option>
               <option value="PAUSED">Paused</option>
             </Select>
+          </div>
+
+          <div>
+            <Label>Expiry Date & Time</Label>
+            <Input
+              value={expiry}
+              type="datetime-local"
+              placeholder="select data & time"
+              onChange={(e) => setExpiry(e.target.value)}
+            />
           </div>
 
           {displayedError && (

@@ -9,12 +9,8 @@ import com.aman.urlshortner.entity.UrlStatus;
 import com.aman.urlshortner.service.UrlService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Objects;
-
 
 @RestController
 @RequestMapping("/api/url")
@@ -48,12 +44,6 @@ public class UrlController {
                 status
         );
         return ApiResponse.ok("All URLs fetched", lists);
-    }
-
-    @GetMapping("/analytics")
-    public ResponseEntity<ApiResponse<Void>> analytics(@PathVariable String shortCode) {
-//        String urlString = urlService.redirect(shortCode);
-        return ApiResponse.ok("GET Analytics");
     }
 
     @DeleteMapping("/{id}")

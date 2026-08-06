@@ -38,6 +38,7 @@ export async function createLink(
     targetUrl: payload.url,
     shortCode: payload.code,
     status: payload.status,
+    expirationDate: payload.expirationDate,
   });
   return res.data.data;
 }
