@@ -18,11 +18,15 @@ export default function LinkDetailPage() {
   const navigate = useNavigate();
   const { data } = useLinks();
   const { mutate: toggleStatus, isPending: isTogglePending } = useToggleLinkStatus();
-  const { mutate: deleteLink, isPending: isDeletePending } = useDeleteLink();
+  const { mutate: deleteLink, isPending: isDeletePending, isSuccess } = useDeleteLink();
 
   const links = data?.links ?? [];
 
   const link = links.find((l) => l.id === Number(id));
+
+  if (isSuccess) {
+    navigate("/links");
+  }
 
   return (
     <div className="max-w-130 animate-fade-up">
@@ -103,6 +107,8 @@ export default function LinkDetailPage() {
                   year: "numeric",
                   month: "short",
                   day: "numeric",
+                  hour: "2-digit",
+                  minute: "2-digit",
                 })}
               </p>
             </div>
